@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>نظام الحضور والانصراف</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+        body {
+            background-color: #0d1117;
+            color: #c9d1d9;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .card {
+            background-color: #161b22;
+            border: 1px solid #30363d;
+            border-radius: 12px;
+            padding: 30px;
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+        }
+        h2 {
+            margin-bottom: 20px;
+            color: #58a6ff;
+        }
+        .btn {
+            background-color: #238636;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            margin: 10px 0;
+            width: 100%;
+            border-radius: 6px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .btn:hover {
+            background-color: #2ea043;
+        }
+        .btn-logout {
+            background-color: #da3633;
+        }
+        .btn-logout:hover {
+            background-color: #f85149;
+        }
+        input {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            background-color: #0d1117;
+            border: 1px solid #30363d;
+            border-radius: 6px;
+            color: white;
+            font-size: 15px;
+        }
+        input:focus {
+            border-color: #58a6ff;
+            outline: none;
+        }
+        .fingerprint-container {
+            margin: 20px 0;
+            cursor: pointer;
+            display: inline-block;
+            border-radius: 10px;
+            overflow: hidden;
+            border: 2px solid #30363d;
+            transition: transform 0.2s, border-color 0.2s;
+        }
+        .fingerprint-container:hover {
+            border-color: #238636;
+        }
+        .fingerprint-container:active {
+            transform: scale(0.95);
+        }
+        .fingerprint-container img {
+            width: 180px;
+            height: auto;
+            display: block;
+        }
+        .hidden {
+            display: none;
+        }
+        .success-msg {
+            color: #3fb950;
+            font-size: 18px;
+            line-height: 1.6;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="card">
+        <!-- الواجهة الرئيسية -->
+        <div id="main-screen">
+            <h2>نظام الحضور والإنصراف</h2>
+            <button class="btn" onclick="showLoginInputs()">تسجيل دخول</button>
+            <button class="btn btn-logout" onclick="showLogoutMessage()">تسجيل خروج</button>
+        </div>
+
+        <!-- شاشة إدخال المعرفات (خاصة بتسجيل الدخول) -->
+        <div id="inputs-screen" class="hidden">
+            <h2>البيانات التعريفية</h2>
+            <input type="text" id="discord-name" placeholder="اسمك في ديسكورد (Discord)">
+            <input type="text" id="roblox-name" placeholder="اسمك في روبلوكس (Roblox)">
+            <button class="btn" onclick="goToFingerprint()">التالي</button>
+        </div>
+
+        <!-- شاشة جهاز البصمة -->
+        <div id="fingerprint-screen" class="hidden">
+            <h2>التحقق بالبصمة</h2>
+            <p>اضغط على جهاز البصمة أدناه لتأكيد هويتك</p>
+            <div class="fingerprint-container" onclick="completeLogin()">
+                <img src="data:image/jpeg;base64,...(تم دمج الصورة في الكود)..." alt="جهاز البصمة">
+            </div>
+            <p style="font-size: 13px; color: #8b949e;">اضغط على الجهاز للبصمة</p>
+        </div>
+
+        <!-- شاشة النجاح لتسجيل الدخول -->
+        <div id="success-login-screen" class="hidden">
+            <div class="success-msg">
+                تم تسجيل الدخول بنجاح!<br>
+                <strong>توجه للراديو</strong><br><br>
+                وشكرا لك.
+            </div>
+            <button class="btn" style="margin-top: 20px;" onclick="resetSystem()">العودة للرئيسية</button>
+        </div>
+
+        <!-- شاشة النجاح لتسجيل الخروج -->
+        <div id="success-logout-screen" class="hidden">
+            <div class="success-msg">
+                تم تسجيل الخروج بنجاح!<br><br>
+                شكرا لك.
+            </div>
+            <button class="btn btn-logout" style="margin-top: 20px;" onclick="resetSystem()">العودة للرئيسية</button>
+        </div>
+    </div>
+
+    <script>
+        function showLoginInputs() {
+            document.getElementById('main-screen').classList.add('hidden');
+            document.getElementById('inputs-screen').classList.remove('hidden');
+        }
+
+        function goToFingerprint() {
+            const discord = document.getElementById('discord-name').value;
+            const roblox = document.getElementById('roblox-name').value;
+
+            if(discord.trim() === "" || roblox.trim() === "") {
+                alert("الرجاء تعبئة جميع الحقول!");
+                return;
+            }
+
+            document.getElementById('inputs-screen').classList.add('hidden');
+            document.getElementById('fingerprint-screen').classList.remove('hidden');
+        }
+
+        function completeLogin() {
+            document.getElementById('fingerprint-screen').classList.add('hidden');
+            document.getElementById('success-login-screen').classList.remove('hidden');
+        }
+
+        function showLogoutMessage() {
+            document.getElementById('main-screen').classList.add('hidden');
+            document.getElementById('success-logout-screen').classList.remove('hidden');
+        }
+
+        function resetSystem() {
+            document.getElementById('discord-name').value = "";
+            document.getElementById('roblox-name').value = "";
+            
+            document.getElementById('success-login-screen').classList.add('hidden');
+            document.getElementById('success-logout-screen').classList.add('hidden');
+            document.getElementById('main-screen').classList.remove('hidden');
+        }
+    </script>
+
+</body>
+</html>
